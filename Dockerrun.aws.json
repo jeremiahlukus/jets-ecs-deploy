@@ -1,0 +1,29 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "networkMode": "bridge",
+  "family": "application-stack",
+  "containerDefinitions": [
+    {
+      "name": "jets-ecs-deploy",
+      "image": "267897273784.dkr.ecr.us-east-1.amazonaws.com/jets-ecs-deploy:latest",
+      "essential": true,
+      "memory": 1700,
+      "cpu": "1024",
+      "logConfiguration": {
+	"logDriver": "awslogs",
+	"options": {
+	  "awslogs-group": "awslogs-jets",
+	  "awslogs-region": "us-east-1",
+	  "awslogs-stream-prefix": "awslogs-jets",
+	  "awslogs-create-group": "true"
+	}
+      },
+      "portMappings": [
+	{
+	  "hostPort": 80,
+	  "containerPort": 80
+	}
+      ]
+    }
+  ]
+}

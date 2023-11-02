@@ -1,0 +1,89 @@
+# application name
+application: jets-ecs-deploy-test
+
+common:
+  region: us-east-1
+  phoenix_mode: true
+  solution_stack_name: 64bit Amazon Linux 2 v3.2.3 running ECS
+  strategy: blue-green
+  blue_green_terminate_inactive: true
+  blue_green_terminate_inactive_wait: 120
+
+  smoke_test: |
+    curl_http_code = "curl -s -o /staging/null -w \"%{http_code}\" http://#{host_name}"
+    Timeout.timeout(600) do
+      until ['200', '301', '302'].include?(`#{curl_http_code}`.strip)
+        sleep 5
+      end
+    end
+  option_settings:
+    - namespace: aws:elasticbeanstalk:application:environment
+      option_name: DB_HOST
+      value: <%= ENV['DB_HOST'] %>
+    - namespace: aws:elasticbeanstalk:application:environment
+      option_name: DB_USER
+      value: <%= ENV['DB_USER'] %>
+    - namespace: aws:elasticbeanstalk:application:environment
+      option_name: DB_PASS
+      value: <%= ENV['DB_PASS'] %>
+    - namespace: aws:elasticbeanstalk:application:environment
+      option_name: DB_URL
+      value: <%= ENV['DB_URL'] %>
+    - namespace: aws:elasticbeanstalk:application:environment
+      option_name: DB_NAME
+      value: <%= ENV['DB_NAME'] %>
+
+
+
+    - namespace: aws:elasticbeanstalk:command
+      option_name: Timeout
+      value: "1500"
+    - namespace: aws:autoscaling:launchconfiguration
+      option_name: RootVolumeType
+      value: gp3
+    - namespace: aws:autoscaling:launchconfiguration
+      option_name: RootVolumeIOPS
+      value: "3000"
+    - namespace: aws:autoscaling:launchconfiguration
+      option_name: RootVolumeSize
+      value: "16"
+
+    - namespace: aws:autoscaling:asg
+      option_name: Cooldown
+      value: "1200"
+    - namespace: aws:elasticbeanstalk:healthreporting:system
+      option_name: SystemType
+      value: enhanced
+    - namespace: aws:elasticbeanstalk:healthreporting:system
+      option_name: EnhancedHealthAuthEnabled
+      value: "true"
+    - namespace: aws:autoscaling:launchconfiguration
+      option_name: InstanceType
+      value:  m5.large
+    - namespace: aws:autoscaling:launchconfiguration
+      option_name: IamInstanceProfile
+      value: aws-elasticbeanstalk-ec2-role
+
+    # - namespace: aws:elb:loadbalancer
+    #   option_name: SSLCertificateId
+    #   value: arn:aws:acm:us-east-1:267897273784:certificate/870617c3-191b-476d-8a8a-b66c1b358408
+
+    - namespace: aws:elasticbeanstalk:application
+      option_name: Application Healthcheck URL
+      value: '/healthcheck'
+    - namespace: aws:elasticbeanstalk:application:environment
+      option_name: JETS_ENV
+      value: <%= ENV['JETS_ENV'] %>
+
+
+
+
+# You can define environment here. Each environment can overriden any common settings
+environments:
+  development:
+  staging:
+    # example for overriding common settings
+    # strategy: inplace-update
+  production:
+    option_settings:
+
