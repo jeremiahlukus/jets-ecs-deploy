@@ -29,3 +29,6 @@ deploy.sh does this for you just pass in the env you want to deploy
 You also need to set your env vars in your eb_deploy.yml
 Like
 https://github.com/jeremiahlukus/jets-ecs-deploy/blob/main/config/eb_deployer.yml#L22
+
+
+<img width="1303" alt="Screenshot 2023-11-02 at 8 01 07 PM" src="https://github.com/jeremiahlukus/jets-ecs-deploy/assets/17206638/998beb18-0601-421e-9037-4d6ca0bf8e4a">
